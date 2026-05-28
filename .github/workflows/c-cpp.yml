@@ -1,0 +1,21 @@
+name: Build ToolsLib Project
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        run: git clone https://github.com/MoiseenkoAA/root.git root && git clone https://github.com/MoiseenkoAA/ToolsLib.git ToolsLib && git clone https://github.com/MoiseenkoAA/CryptLib.git CryptLib && git clone https://github.com/MoiseenkoAA/FtpServer.git FtpServer && cp -a root/Makefile.inc root/small_defs.inc .
+
+      - name: Install dependencies (if needed)
+        run: sudo apt-get update && sudo apt-get install -y build-essential gcc g++ make libgd3 libgd-dev curl libcurl4-openssl-dev nasm git
+
+      - name: Build with Make
+        run: make -s -j 8 -C ToolsLib && make -s -j 8 -C CryptLib && make -s -j 8 -C FtpServer

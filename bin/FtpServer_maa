@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# send notification e-mail on boot up
+
+# Source function library.
+tst=""
+if [ -r "/etc/init.d/functions" ]; then
+. /etc/init.d/functions
+else
+tst="echo \"/etc/init.d/functions not found\""
+
+if [ -r "/lib/init/vars.sh" ]; then
+  tst=""
+  . /lib/init/vars.sh
+  tst=""
+else
+  echo "/lib/init/vars.sh not found"
+fi
+if [ -r "/lib/lsb/init-functions" ]; then
+  tst=""
+  . /lib/lsb/init-functions
+  tst=""
+else
+  echo "/lib/lsb/init-functions not found"
+fi
+
+$tst
+fi
+
+
+skel=/etc/mail/rebooted.msg
+msg=/etc/mail/info_server_is_rebooted.msg
+testmsg=/etc/mail/test_info_server_is_rebooted.msg
+replace=/bin/root/replace.out
+
+
+
+start() {
+    cd /home/maa/CPP/FtpServer/bin
+    /etc/simple_logrotate.sh logfile.log 2>&1 >/dev/null
+    /home/maa/CPP/FtpServer/bin/FtpServer 2>&1 >logfile.log &
+#    /home/maa/CPP/FtpServer/bin/FtpServer 2>&1 >/dev/null &
+}
+
+status() {
+    ps axwu|grep FtpServer
+}
+
+stop() {
+    killall -9 FtpServer
+}
+
+case "$1" in
+start)
+    start
+    ;;
+
+status)
+    status
+    ;;
+
+stop)
+    stop
+    ;;
+restart)
+    stop
+    start
+    ;;
+
+*)
+   echo $"Usage: $0 {start|stop|restart|status}"
+   exit 1
+esac
+
+exit 0
+

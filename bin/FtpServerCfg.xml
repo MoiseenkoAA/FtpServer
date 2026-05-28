@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE FtpServer>
+<Config Port=":4121" >
+ <Users>
+  <User PassType="hash" PassSalt="D51BE2E754F5A9AF" PassHash="9AB6C31668C6618E101B76CC64760675A5556DE37847E5AB209FCD19673BC4C7" PassHashType="GBM1" Name="maa" FXP="true" >
+   <dir vfs_path="/" real_path="E:\FDM" />
+   <dir vfs_path="/a" real_path="D:\FTP" />
+   <dir vfs_path="/downloads" real_path="F:\Downloads" />
+   <dir vfs_path="/Mac" real_path="D:\Rip\Mac" />
+   <dirperm path="E:\FDM" perm=" R+ W+ A+ C+ D+ Ren+ DL+ DC+ DD+ DRen+ I+" />
+   <dirperm path="D:\FTP" perm=" R+ W+ A+ C+ D+ Ren+ DL+ DC+ DD+ DRen+ I+" />
+   <dirperm path="F:\Downloads" perm=" R+ DL+ I+" />
+   <dirperm path="E:\Video" perm=" R+ DL+ I+" />
+   <dirperm path="D:\Rip\Mac" perm=" R+ DL+ I+" />
+  </User>
+  <User Name="anonymous" FXP="false" PassType="email" >
+   <dir vfs_path="/" real_path="E:\FTP\anonymous" />
+   <dirperm path="E:\FTP\anonymous" perm=" R+ DL+ I+" />
+  </User>
+  <User Name="unix" FXP="true" PassType="Plain" Pass="cool_unix_password" >
+   <dir vfs_path="/" real_path="/home/maa/temp/ftp" />
+   <dirperm path="/home/maa/temp/ftp" perm=" R+ D+ DL+ I+" />
+   <dirperm path="/home/maa/temp/ftp/rw" perm=" R+ W+ A+ C+ D+ Ren+ DL+ DC+ DD+ DRen+ I+" />
+  </User>
+ </Users>
+</Config>

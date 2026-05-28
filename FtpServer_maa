@@ -1,0 +1,104 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          FtpServer_maa
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Should-Start:      $network $time
+# Should-Stop:       $network $time
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: descr text
+# Description:       description text
+### END INIT INFO
+
+# send notification e-mail on boot up
+
+# Source function library.
+tst=""
+if [ -r "/etc/init.d/functions" ]; then
+. /etc/init.d/functions
+else
+tst="echo \"/etc/init.d/functions not found\""
+
+if [ -r "/lib/init/vars.sh" ]; then
+  tst=""
+  . /lib/init/vars.sh
+  tst=""
+else
+  echo "/lib/init/vars.sh not found"
+fi
+if [ -r "/lib/lsb/init-functions" ]; then
+  tst=""
+  . /lib/lsb/init-functions
+  tst=""
+else
+  echo "/lib/lsb/init-functions not found"
+fi
+
+$tst
+fi
+
+
+skel=/etc/mail/rebooted.msg
+msg=/etc/mail/info_server_is_rebooted.msg
+testmsg=/etc/mail/test_info_server_is_rebooted.msg
+replace=/bin/root/replace.out
+
+
+
+start() {
+#    cd /home/maa/CPP/FtpServer/bin
+#    /etc/simple_logrotate.sh logfile.log 2>&1 >/dev/null
+#    /home/maa/CPP/FtpServer/bin/FtpServer 2>&1 >logfile.log &
+##    /home/maa/CPP/FtpServer/bin/FtpServer 2>&1 >/dev/null &
+
+    ulimit -c unlimited
+
+    cd /root/MaaSoftware/cpp/FtpServer/bin21
+    /etc/simple_logrotate.sh logfile.log 2>&1 >/dev/null
+    /etc/simple_logrotate.sh /var/log/proftpd/maa_ftp_fail.log 2>&1 >/dev/null
+    touch /var/log/proftpd/maa_ftp_fail.log
+    chmod 640 /var/log/proftpd/maa_ftp_fail.log
+    /root/MaaSoftware/cpp/FtpServer/bin21/FtpServer 2>&1 >logfile.log &
+
+    cd /home/maa/CPP/FtpServer/bin
+    /etc/simple_logrotate.sh logfile.log 2>&1 >/dev/null
+    /etc/simple_logrotate.sh /var/log/maa/maa_ftp_fail.log 2>&1 >/dev/null
+    touch /var/log/maa/maa_ftp_fail.log
+    chown maa:maa /var/log/maa/maa_ftp_fail.log
+    chmod 640 /var/log/maa/maa_ftp_fail.log
+    ./FtpServer 2>&1 >logfile.log &
+}
+
+status() {
+    ps axwu|grep FtpServer
+}
+
+stop() {
+    killall -9 FtpServer
+}
+
+case "$1" in
+start)
+    start
+    ;;
+
+status)
+    status
+    ;;
+
+stop)
+    stop
+    ;;
+restart)
+    stop
+    start
+    ;;
+
+*)
+   echo $"Usage: $0 {start|stop|restart|status}"
+   exit 1
+esac
+
+exit 0
+
