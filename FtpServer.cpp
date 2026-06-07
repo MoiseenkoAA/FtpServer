@@ -870,7 +870,7 @@ bool CMaaFtpServerConnection::Process()
     }
     CMaaString txt = m_InBuffer.Left(m_InBuffer[x - 1] == '\r' ? x - 1 : x);
 #ifdef BB_SUPPORT
-    if (txt.Left(3) == "bb ")
+    if (txt.IsLeft("bb ", 3))
     {
 	txt = txt.Mid(3).Base64Decode();
 	gbb = true;
