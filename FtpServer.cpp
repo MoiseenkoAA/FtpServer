@@ -846,7 +846,8 @@ CMaaFtpServerConnection::DirCompare(const void * p1, const void * p2)
     {
         return a->m_Type - b->m_Type;
     }
-    return CMaaString::Compare(a->m_FileName, b->m_FileName, 2);
+    //return CMaaString::Compare(a->m_FileName, b->m_FileName, 2);
+    return CMaaString::Compare(a->m_Fn, b->m_Fn, 2);
 }
 
 bool CMaaFtpServerConnection::Process()
@@ -1956,7 +1957,9 @@ bool CMaaFtpServerConnection::Process()
                             {
                                 txt = txt.RefMid(n + 1);
                             }
-                            m[0].m_FileName = txt;
+                            m[0].m_Dir = CMaaFile::GetFolderName(Mask);
+                            m[0].m_FileName = Mask;//  m[0].m_Dir + szFILESYSTEM_SLASH + txt;
+                            m[0].m_Fn = txt;
                         }
                         if   (CanonicalFs.IsRight("/*.*", 4))
                         {
@@ -2003,7 +2006,7 @@ bool CMaaFtpServerConnection::Process()
                                             }
                                             if   (nnn >= N)
                                             {
-                                                f.m_FileName = x;
+                                                f.m_FileName = f.m_Dir + szFILESYSTEM_SLASH + x;
                                                 f.m_Fn = x;
                                                 m[N++] = f;
                                             }
