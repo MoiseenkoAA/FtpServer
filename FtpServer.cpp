@@ -1996,7 +1996,7 @@ bool CMaaFtpServerConnection::Process()
                                             int nnn = 0;
                                             for  (; nnn < N; nnn++)
                                             {
-                                                if   (m[nnn].m_FileName == x)
+                                                if   (m[nnn].m_Fn == x)
                                                 {
                                                     break;
                                                 }
@@ -2004,6 +2004,7 @@ bool CMaaFtpServerConnection::Process()
                                             if   (nnn >= N)
                                             {
                                                 f.m_FileName = x;
+                                                f.m_Fn = x;
                                                 m[N++] = f;
                                             }
                                         }
