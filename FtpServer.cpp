@@ -2231,7 +2231,7 @@ bool CMaaFtpServerConnection::Process()
                 m_OutBuffer += "426 dir not found.\r\n";
                 return true;
             }
-            bool bSkipExisted = false;
+            //bool bSkipExisted = false;
             //const char* pMode = nullptr;
             CMaaFile::eMode fMode = CMaaFile::eNoMode;
             if   (bRecv)
@@ -2256,7 +2256,7 @@ bool CMaaFtpServerConnection::Process()
                 if (m_Rest == 0)
                 {
                     fMode = Perm.Find(" C+") >= 0 ? CMaaFile::eAC_SrSw : CMaaFile::eA_SrSw;
-                    bSkipExisted = false;// (m_Rest == 0 && Perm.Find(" D+") < 0);
+                    //bSkipExisted = false;// (m_Rest == 0 && Perm.Find(" D+") < 0);
                 }
                 else
                 {
@@ -2281,7 +2281,7 @@ bool CMaaFtpServerConnection::Process()
                         //pMode = Perm.Find(" C+") >= 0 ? "WCN|SwSr" : nullptr;
                         fMode = Perm.Find(" C+") >= 0 ? CMaaFile::eWCN_SrSw : CMaaFile::eNoMode;
                     }
-                    bSkipExisted = (m_Rest == 0 && Perm.Find(" D+") < 0);
+                    //bSkipExisted = (m_Rest == 0 && Perm.Find(" D+") < 0);
                 }
                 else
                 {
