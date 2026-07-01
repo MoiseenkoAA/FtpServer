@@ -1440,6 +1440,8 @@ bool CMaaFtpServerConnection::Process()
             //m_OutBuffer += " MLST\r\n";
             m_OutBuffer += " SIZE\r\n";
             m_OutBuffer += " MDTM\r\n";
+            m_OutBuffer += " REST\r\n";
+            m_OutBuffer += " APPE\r\n";
             m_OutBuffer += " UTF8\r\n";
             m_OutBuffer += "211 END\r\n";
         }
