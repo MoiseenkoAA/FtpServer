@@ -967,7 +967,7 @@ bool CMaaFtpServerConnection::Process()
         m_OutBuffer += "    USER    PASS    SYST    NOOP    HELP    CWD     CDUP    PWD     XPWD\r\n";
         m_OutBuffer += "    TYPE    REST    PORT    PASV    LIST    NLST    RETR    STOR    SIZE\r\n";
         m_OutBuffer += "    DELE    MKD     XMKD    RMD     XRMD    RNFR    RNTO    MDTM    ABOR\r\n";
-        m_OutBuffer += "    OPTS    FEAT    UTF8    EPRT    EPSV\r\n";
+        m_OutBuffer += "    APPE    OPTS    FEAT    UTF8    EPRT    EPSV\r\n";
         m_OutBuffer += "214 Developer's e-mail: support@maasoftware.ru\r\n";
         return true;
     }
@@ -2215,12 +2215,13 @@ bool CMaaFtpServerConnection::Process()
             // Error
             m_OutBuffer += "426 Error transferring data.\r\n";
         }
-        else if (txt5u == "RETR " || txt5u == "STOR ")
+        else if (txt5u == "RETR " || txt5u == "STOR " || txt5u == "APPE ")
         {
             //printf("%s\n", (const char *)txt);
 
             DEF_m_TimerTimeOut10_Start_TIME_OUT_1;
             const bool bRecv = txt5u == "RETR ";
+            const bool bAppe = txt5u == "APPE ";
             CMaaString FileName = ToFileName(txt.RefMid(5));
             CMaaString Perm, tmp = FileName;
             if   (!GetRealAndCanonicalFsName(m_Path, FileName, &FileName, nullptr, true, &Perm))
@@ -2241,6 +2242,24 @@ bool CMaaFtpServerConnection::Process()
                 }
                 //pMode = "R|Sr";
                 fMode = CMaaFile::eR_Sr;
+            }
+            else if (bAppe)
+            {
+                if (Perm.Find(" A+") < 0)
+                {
+                    CMaaString tmp2 = ToFtpSafe(tmp);
+                    m_OutBuffer.Append("426 you have no permissions to append to the file %S.\r\n", &tmp2);
+                    return true;
+                }
+                if (m_Rest == 0)
+                {
+                    fMode = Perm.Find(" C+") >= 0 ? CMaaFile::eAC_SrSw : CMaaFile::eA_SrSw;
+                    bSkipExisted = false;// (m_Rest == 0 && Perm.Find(" D+") < 0);
+                }
+                else
+                {
+                    fMode = Perm.Find(" C+") >= 0 ? CMaaFile::eAC_SrSw : CMaaFile::eA_SrSw;
+                }
             }
             else
             {
@@ -2297,7 +2316,7 @@ bool CMaaFtpServerConnection::Process()
                     CMaaString tmpMode = CMaaFile::GetMode(fMode);
                     printf("opening %S, %S\n", &FileName, &tmpMode);
                     m_File = CMaaFile(FileName, fMode);
-                    if   (!m_File.Seek(m_Rest))
+                    if   ((!bAppe || m_Rest) && !m_File.Seek(m_Rest))
                     {
                         printf("seek failed\n");
                         throw 1;
