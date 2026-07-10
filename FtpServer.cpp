@@ -2832,7 +2832,7 @@ bool CMaaFtpServerConnection::Process()
                 {
                     if   (txt[i] > ' ' && txt[i] < 0x7f)
                     {
-                        m_OutBuffer.AddMid(txt, i, 1);
+                        m_OutBuffer.AddMidOf(txt, i, 1);
                     }
                     else
                     {
