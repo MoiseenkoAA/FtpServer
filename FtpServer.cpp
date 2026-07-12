@@ -2830,14 +2830,15 @@ bool CMaaFtpServerConnection::Process()
                 m_OutBuffer.Append("500 Command not understood: ");
                 for  (int i = 0; i < txt.Length() && i < 100; i++)
                 {
-                    if   (txt[i] > ' ' && txt[i] < 0x7f)
+                    const char c = txt[i];
+                    if   (c > ' ' && c < 0x7f)
                     {
-                        m_OutBuffer.AddMidOf(txt, i, 1);
+                        m_OutBuffer += c;
                     }
                     else
                     {
                         char ttt[20];
-                        sprintf(ttt, "%%%02X", (int)(unsigned char)(char)txt[i]);
+                        sprintf(ttt, "%%%02X", (int)(unsigned char)c);
                         m_OutBuffer += ttt;
                     }
                 }
