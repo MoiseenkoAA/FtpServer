@@ -3138,12 +3138,14 @@ CFtpServerData::CFtpServerData(CMaaFdSockets * pFdSockets, int domain, CMaaFtpSe
     m_Timer0(this, 0),
     m_Timer1(this, 1),
     m_TimerTimeOut10(this, 10),
+    m_TimerFlash14(this, 14),
     m_TimerFlash15(this, 15),
     m_TimerAbor13(this, 13)
 {
     m_Timer0.Attach(pFdSockets);
     m_Timer1.Attach(pFdSockets);
     m_TimerTimeOut10.Attach(pFdSockets);
+    m_TimerFlash14.Attach(pFdSockets);
     m_TimerFlash15.Attach(pFdSockets);
     m_TimerAbor13.Attach(pFdSockets);
     m_BytesTransferred = 0;
@@ -3191,6 +3193,7 @@ CFtpServerData::CFtpServerData(CMaaFdSockets * pFdSockets, CMaaFtpServerConnecti
     m_Timer0(this, 0),
     m_Timer1(this, 1),
     m_TimerTimeOut10(this, 10),
+    m_TimerFlash14(this, 14),
     m_TimerFlash15(this, 15),
     m_TimerAbor13(this, 13)
 {
@@ -3198,6 +3201,7 @@ CFtpServerData::CFtpServerData(CMaaFdSockets * pFdSockets, CMaaFtpServerConnecti
     m_Timer0.Attach(pFdSockets);
     m_Timer1.Attach(pFdSockets);
     m_TimerTimeOut10.Attach(pFdSockets);
+    m_TimerFlash14.Attach(pFdSockets);
     m_TimerFlash15.Attach(pFdSockets);
     m_TimerAbor13.Attach(pFdSockets);
     m_BytesTransferred = 0;
@@ -3288,6 +3292,7 @@ CFtpServerData::CFtpServerData(CMaaFdSockets * pFdSockets, CMaaFtpServerConnecti
     m_Timer0(this, 0),
     m_Timer1(this, 1),
     m_TimerTimeOut10(this, 10),
+    m_TimerFlash14(this, 14),
     m_TimerFlash15(this, 15),
     m_TimerAbor13(this, 13)
 {
@@ -3295,6 +3300,7 @@ CFtpServerData::CFtpServerData(CMaaFdSockets * pFdSockets, CMaaFtpServerConnecti
     m_Timer0.Attach(pFdSockets);
     m_Timer1.Attach(pFdSockets);
     m_TimerTimeOut10.Attach(pFdSockets);
+    m_TimerFlash14.Attach(pFdSockets);
     m_TimerFlash15.Attach(pFdSockets);
     m_TimerAbor13.Attach(pFdSockets);
     m_BytesTransferred = 0;
@@ -3471,8 +3477,14 @@ int CFtpServerData::Notify_Read()
                 CloseByException("file write error");
             }
         }
+        m_TimerFlash14.Stop();
+        m_TimerFlash15.Stop();
     }
-    m_TimerFlash15.Start(1000000, false);
+    else
+    {
+        m_TimerFlash14.WeakStart(30000000, false);
+        m_TimerFlash15.Start(1000000, false);
+    }
     /*
     if   (IsClosed(r_))
     {
@@ -3763,7 +3775,10 @@ void CFtpServerData::OnTimer(int f)
         m_Error = 13; // abort
         CloseByException("OnTimer(13)");
         break;
+    case 14:
+        //printf("Flush 30s\n");
     case 15:
+        m_TimerFlash14.Stop();
         m_TimerFlash15.Stop();
         //printf("Flush 1s\n");
         FlushRecv(true);

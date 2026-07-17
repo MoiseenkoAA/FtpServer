@@ -79,7 +79,7 @@ private:
      
 //     CMaaString 
 
-     CMaaSockTimerT<CFtpServerData> m_Timer0, m_Timer1, m_TimerTimeOut10, m_TimerFlash15;
+     CMaaSockTimerT<CFtpServerData> m_Timer0, m_Timer1, m_TimerTimeOut10, m_TimerFlash14, m_TimerFlash15;
 public:
      CMaaSockTimerT<CFtpServerData> m_TimerAbor13;
 
