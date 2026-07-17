@@ -3138,11 +3138,13 @@ CFtpServerData::CFtpServerData(CMaaFdSockets * pFdSockets, int domain, CMaaFtpSe
     m_Timer0(this, 0),
     m_Timer1(this, 1),
     m_TimerTimeOut10(this, 10),
+    m_TimerFlash15(this, 15),
     m_TimerAbor13(this, 13)
 {
     m_Timer0.Attach(pFdSockets);
     m_Timer1.Attach(pFdSockets);
     m_TimerTimeOut10.Attach(pFdSockets);
+    m_TimerFlash15.Attach(pFdSockets);
     m_TimerAbor13.Attach(pFdSockets);
     m_BytesTransferred = 0;
     m_Error = 0;
@@ -3189,12 +3191,14 @@ CFtpServerData::CFtpServerData(CMaaFdSockets * pFdSockets, CMaaFtpServerConnecti
     m_Timer0(this, 0),
     m_Timer1(this, 1),
     m_TimerTimeOut10(this, 10),
+    m_TimerFlash15(this, 15),
     m_TimerAbor13(this, 13)
 {
     printf("CFtpServerData::CFtpServerData(%I, %d, %S)...\n", Ip, Port, &strServerIpPort);
     m_Timer0.Attach(pFdSockets);
     m_Timer1.Attach(pFdSockets);
     m_TimerTimeOut10.Attach(pFdSockets);
+    m_TimerFlash15.Attach(pFdSockets);
     m_TimerAbor13.Attach(pFdSockets);
     m_BytesTransferred = 0;
     m_Error = 10;
@@ -3284,12 +3288,14 @@ CFtpServerData::CFtpServerData(CMaaFdSockets * pFdSockets, CMaaFtpServerConnecti
     m_Timer0(this, 0),
     m_Timer1(this, 1),
     m_TimerTimeOut10(this, 10),
+    m_TimerFlash15(this, 15),
     m_TimerAbor13(this, 13)
 {
     printf("CFtpServerData::CFtpServerData(%J, %d, %S)...\n", Ip, Port, &strServerIpPort);
     m_Timer0.Attach(pFdSockets);
     m_Timer1.Attach(pFdSockets);
     m_TimerTimeOut10.Attach(pFdSockets);
+    m_TimerFlash15.Attach(pFdSockets);
     m_TimerAbor13.Attach(pFdSockets);
     m_BytesTransferred = 0;
     m_Error = 10;
@@ -3466,6 +3472,7 @@ int CFtpServerData::Notify_Read()
             }
         }
     }
+    m_TimerFlash15.Start(1000000, false);
     /*
     if   (IsClosed(r_))
     {
@@ -3755,6 +3762,11 @@ void CFtpServerData::OnTimer(int f)
         printf("Data transfer aborted\n");
         m_Error = 13; // abort
         CloseByException("OnTimer(13)");
+        break;
+    case 15:
+        m_TimerFlash15.Stop();
+        //printf("Flush 1s\n");
+        FlushRecv(true);
         break;
     }
 }

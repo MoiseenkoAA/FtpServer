@@ -25,7 +25,7 @@ all: Makefile $(TARGET)
 #install
 
 $(TARGET):  $(OBJECTS)  ../ToolsLib/ToolsLib.a ../CryptLib/CryptLib.a
-	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) ../ToolsLib/ToolsLib.a ../CryptLib/CryptLib.a
+	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) ../ToolsLib/ToolsLib.a ../CryptLib/CryptLib.a -lfcgi
 
 #clean:
 #	-$(DEL_FILE) $(OBJECTS) $(TARGET)
