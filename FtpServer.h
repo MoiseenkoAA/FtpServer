@@ -93,7 +93,7 @@ public:
           m_Mode = 0;
           m_DataTxt = txt;
           m_DataTxtPos = m_BufferSize = 0;
-          m_Timer1.Start(1);
+          m_Timer1.StartExt(1);
           //printf("SetDataTxt():\n%s\n", (const char *)m_DataTxt);
      }
      void SetSendFile(CMaaFile f) noexcept
@@ -101,7 +101,7 @@ public:
           m_Mode = 1;
           m_File = f;
           m_BufferPos = m_BufferSize = 0;
-          m_Timer1.Start(1);
+          m_Timer1.StartExt(1);
      }
      void SetRecvFile(CMaaFile f) noexcept
      {
@@ -109,7 +109,7 @@ public:
           m_File = f;
           //m_BufferPos = 0;
           m_BufferPos = m_BufferSize = 0;
-          m_Timer1.Start(1);
+          m_Timer1.StartExt(1);
      }
 
      int Notify_Read() override;
@@ -205,7 +205,7 @@ public:
           m_PeerIp = Ip;
           m_PeerPort = Port;
           m_PeerAccepted = bAccepted;
-          m_Timer1.Start(1);
+          m_Timer1.StartExt(1);
      }
      void SetPeerAccepted(_byte * Ip, _Port Port, bool bAccepted = true) noexcept
      {
@@ -213,7 +213,7 @@ public:
           m_PeerIp = 0;
           m_PeerPort = Port;
           m_PeerAccepted = bAccepted;
-          m_Timer1.Start(1);
+          m_Timer1.StartExt(1);
      }
 
      CMaaString GetConnectionName() noexcept override {return m_ConnName;}

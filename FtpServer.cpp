@@ -181,8 +181,8 @@ CMaaUnivHash<pid_t> ghChildrenPids(MAX_CHILDREN + 10);
 
 const int TIME_OUT_1 = 240000000;
 
-#define DEF_m_TimerTimeOut10_Start_TIME_OUT_1 gLock.LockM(); m_TimerTimeOut10.Start(TIME_OUT_1); gLock.UnLockM()
-#define DEF_SRV_m_TimerTimeOut10_Start_TIME_OUT_1 /*gLock.LockM();*/ m_pServer->m_TimerTimeOut10.Start(TIME_OUT_1, false); /*gLock.UnLockM()*/
+#define DEF_m_TimerTimeOut10_Start_TIME_OUT_1 gLock.LockM(); m_TimerTimeOut10.Start1(TIME_OUT_1); gLock.UnLockM()
+#define DEF_SRV_m_TimerTimeOut10_Start_TIME_OUT_1 /*gLock.LockM();*/ m_pServer->m_TimerTimeOut10.Start1(TIME_OUT_1); /*gLock.UnLockM()*/
 
 static CMaaString ToFtpSafe(CMaaString txt)
 {
@@ -361,7 +361,7 @@ CMaaFtpServer::CMaaFtpServer(CMaaFdSockets* pFdSockets, CMaaString Port, int Cfg
         m_pStat->SetServer(CfgNum, this);
     }
     gLocker.UnLock();
-    m_Timer1s.Start(1000000);
+    m_Timer1s.Start1(1000000);
 #endif
 #ifdef FTP_DBG
     rrlog("||| CMaaFtpServer::CMaaFtpServer()\n");
@@ -417,7 +417,7 @@ void CMaaFtpServer::OnTimer(int f)
     while ((p = m_Connections.GetFromFront()))
     {
         p->m_pServer = nullptr;
-        p->m_Timer0.Start(1);
+        p->m_Timer0.Start1(1);
     }
     gLocker.UnLock();
 #endif
@@ -451,8 +451,8 @@ CMaaTcpSocket * CMaaFtpServer::CreateNewConnection(CMaaFdSockets * pFdSockets)
     if   (pid == 0)
     {
         m_pFdSockets->close_epoll_fd();//FXX_epollfd(); // m_pFdSockets->close_epoll_fd();
-        //m_Timer0.Start(1000000);
-        m_Timer0.Start(1);
+        //m_Timer0.Start1(1000000);
+        m_Timer0.Start1(1);
         gbChild = true;
         return new CMaaFtpServerConnection(pFdSockets, m_IpPort, "FTP server connection");
     }
@@ -553,7 +553,7 @@ CMaaFtpServerConnection::CMaaFtpServerConnection(CMaaFdSockets* pFdSockets, CMaa
             m_pStat = nullptr;
         }
     }
-    //m_Timer1s.Start(1000000);
+    //m_Timer1s.Start1(1000000);
 #endif
 #ifdef FTP_DBG
     rrlog("||| CMaaFtpServerConnection::CMaaFtpServerConnection()\n");
@@ -586,12 +586,12 @@ CMaaFtpServerConnection::~CMaaFtpServerConnection()
     if (m_pDataConn)
     {
         m_pDataConn->m_pServer = nullptr;
-        m_pDataConn->m_TimerAbor13.Start(1);
+        m_pDataConn->m_TimerAbor13.StartExt(1);
     }
     if (m_pPasvServer)
     {
         m_pPasvServer->m_pFtpServerConnection = nullptr;
-        m_pPasvServer->m_Timer0.Start(1);
+        m_pPasvServer->m_Timer0.StartExt(1);
     }
     gLocker.UnLock();
 #ifdef __unix__
@@ -606,7 +606,7 @@ void CMaaFtpServerConnection::OnSend(int x) noexcept
     CMaaAtomicFastMutexLocker agLocker(gLock); // automatic scope locker
     if (m_pStat && !m_pStat->OnSend(x))
     {
-        m_Timer1s.Start(1000000);
+        m_Timer1s.Start1(1000000);
     }
 }
 void CMaaFtpServerConnection::OnRecv(int x) noexcept
@@ -614,7 +614,7 @@ void CMaaFtpServerConnection::OnRecv(int x) noexcept
     CMaaAtomicFastMutexLocker agLocker(gLock); // automatic scope locker
     if (m_pStat && !m_pStat->OnRecv(x))
     {
-        m_Timer1s.Start(1000000);
+        m_Timer1s.Start1(1000000);
     }
 }
 #endif
@@ -1681,7 +1681,7 @@ bool CMaaFtpServerConnection::Process()
             {
                 if   (m_pPasvServer)
                 {
-                    m_pPasvServer->m_Timer0.Start(1);
+                    m_pPasvServer->m_Timer0.Start1(1);
                     m_pPasvServer = nullptr;
                 }
                 m_pPasvServer = new CFtpDataServer(m_pFdSockets, 0, AF_INET, this);
@@ -1743,7 +1743,7 @@ bool CMaaFtpServerConnection::Process()
             {
                 if   (m_pPasvServer)
                 {
-                    m_pPasvServer->m_Timer0.Start(1);
+                    m_pPasvServer->m_Timer0.Start1(1);
                     m_pPasvServer = nullptr;
                 }
                 int domain = -1;
@@ -2412,11 +2412,11 @@ bool CMaaFtpServerConnection::Process()
                 if (m_pDataConn)
                 {
                     bByTimer = true;
-                    m_pDataConn->m_TimerAbor13.Start(1);
+                    m_pDataConn->m_TimerAbor13.StartExt(1);
                 }
                 if (m_pPasvServer)
                 {
-                    m_pPasvServer->m_Timer0.Start(1);
+                    m_pPasvServer->m_Timer0.Start1(1);
                 }
             }
             if   (!bByTimer)
@@ -3376,8 +3376,8 @@ CFtpServerData::~CFtpServerData()
         m_pServer->m_DataError = m_Error;
         m_pServer->m_DataBytesTransferred = m_BytesTransferred;
         m_pServer->m_TransferTime = GetTickCount() - m_Time0;
-        //printf("m_pServer->m_Timer3.Start(1);\n");
-        m_pServer->m_Timer3.Start(1);
+        //printf("m_pServer->m_Timer3.StartExt(1);\n");
+        m_pServer->m_Timer3.StartExt(1);
     }
 }
 
@@ -3428,7 +3428,7 @@ int CFtpServerData::Notify_Read()
     //     printf("CFtpServerData::Notify_Read(): r = %d\n", r);
     //printf("(%d)\n", r);fflush(stdout);
     //printf("point1\n");fflush(stdout);
-    m_TimerTimeOut10.Start(TIME_OUT_1, false);
+    m_TimerTimeOut10.Start1(TIME_OUT_1);
 
     //printf("point2\n");fflush(stdout);
     {
@@ -3440,7 +3440,7 @@ int CFtpServerData::Notify_Read()
             //us1=1000000000, us2=1000000000;
             ////printf("point4\n");fflush(stdout);
             //m_pServer->m_TimerTimeOut10.GetWaitForTime(&us1, m_pFdSockets->GetTime());
-            //m_pServer->m_TimerTimeOut10.Start();
+            //m_pServer->m_TimerTimeOut10.StartExt();
             DEF_SRV_m_TimerTimeOut10_Start_TIME_OUT_1;
             //m_pServer->m_TimerTimeOut10.GetWaitForTime(&us2, m_pFdSockets->GetTime());
         }
@@ -3482,8 +3482,8 @@ int CFtpServerData::Notify_Read()
     }
     else
     {
-        m_TimerFlush14.WeakStart(30000000, false);
-        m_TimerFlush15.Start(1000000, false);
+        m_TimerFlush14.WeakStart1(30000000);
+        m_TimerFlush15.Start1(1000000);
     }
     /*
     if   (IsClosed(r_))
@@ -3538,7 +3538,7 @@ int CFtpServerData::Notify_Write()
     {
         return eDisableWrite;
     }
-    m_TimerTimeOut10.Start(TIME_OUT_1, false);
+    m_TimerTimeOut10.Start1(TIME_OUT_1);
 
 #ifdef FTP_DBG
     SetThreadName(-1, "CFtpServerData_Thread");
@@ -3548,7 +3548,7 @@ int CFtpServerData::Notify_Write()
         CMaaAtomicFastMutexLocker agLocker(gLock); // automatic scope locker
         if (m_pServer)
         {
-            //m_pServer->m_TimerTimeOut10.Start();
+            //m_pServer->m_TimerTimeOut10.Start1();
             DEF_SRV_m_TimerTimeOut10_Start_TIME_OUT_1;
         }
     }
@@ -3579,7 +3579,7 @@ int CFtpServerData::Notify_Write()
             //printf("Send LIST %d bytes complete\n", m_DataTxtPos);
             CloseByException("Send LIST complete");
         }
-        m_TimerTimeOut10.Start(TIME_OUT_1, false);
+        m_TimerTimeOut10.Start1(TIME_OUT_1);
         return eWrite;
     }
     if   (m_Mode == 1)
@@ -3633,7 +3633,7 @@ int CFtpServerData::Notify_Write()
             }
 
         }    while(w > 0);
-        m_TimerTimeOut10.Start(TIME_OUT_1, false);
+        m_TimerTimeOut10.Start1(TIME_OUT_1);
         return 0;//eWrite;
     }
     return 0;
@@ -3814,7 +3814,7 @@ CMaaTcpSocket * CFtpDataServer::CreateNewConnection(CMaaFdSockets * pFdSockets)
 #ifdef FTP_DBG
     SetThreadName(-1, "CFtpDataServer_Thread");
 #endif
-    m_Timer0.Start(1);
+    m_Timer0.Start1(1);
     return new CFtpServerData(pFdSockets, GetDomainSock(), m_pFtpServerConnection);
 }
 //---------------------------------------------------------------------------
@@ -4296,7 +4296,7 @@ int CMaaFtpServer::DeleteUpdateFtpServers(bool bDeleteAll) noexcept
         CMaaFtpServer* p = it.data();
         if (bDeleteAll)
         {
-            p->m_Timer0.Start(1);
+            p->m_Timer0.StartExt(1);
             N++;
         }
         else
@@ -4304,7 +4304,7 @@ int CMaaFtpServer::DeleteUpdateFtpServers(bool bDeleteAll) noexcept
             CMaaXmlNode e = gConfig.m_Cfg.DocumentElement().FindNode(gCon[CCon::e_FtpServersElement]).FindNodeWithAttr(gCon[CCon::e_FtpServerElement], gCon[CCon::e_FtpServer_aId], CMaaString(p->m_CfgNum));
             if (!e || e.FindAttribute(gCon[CCon::e_FtpServer_aPort]) != p->m_IpPort || e.FindAttribute(gCon[CCon::e_FtpServer_aEnabled]) != gCon[CCon::e_True])
             {
-                p->m_Timer0.Start(1);
+                p->m_Timer0.StartExt(1);
                 N++;
             }
         }
@@ -4377,7 +4377,7 @@ int CMaaFtpServer::KillConnections(int CfgNum, int ConnNum, CMaaString UserName)
             {
                 if (c->m_pStat && (CfgNum == -1 || c->m_pStat->m_User == UserName))
                 {
-                    c->m_Timer0.Start(1);
+                    c->m_Timer0.StartExt(1);
                     N++;
                 }
             }
@@ -4391,7 +4391,7 @@ int CMaaFtpServer::KillConnections(int CfgNum, int ConnNum, CMaaString UserName)
         {
             if (c->m_pStat && (ConnNum == -1 || c->m_pStat->m_Num == ConnNum))
             {
-                c->m_Timer0.Start(1);
+                c->m_Timer0.StartExt(1);
                 N++;
             }
         }
