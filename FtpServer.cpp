@@ -417,7 +417,7 @@ void CMaaFtpServer::OnTimer(int f)
     while ((p = m_Connections.GetFromFront()))
     {
         p->m_pServer = nullptr;
-        p->m_Timer0.Start1(1);
+        p->m_Timer0.StartExt(1);
     }
     gLocker.UnLock();
 #endif
