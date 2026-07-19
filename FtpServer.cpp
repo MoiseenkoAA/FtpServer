@@ -743,18 +743,15 @@ int CMaaFtpServerConnection::Notify_Write()
 static constexpr CMaaConstStr s_cstrUnits[] = { "B/s", "KB/s", "MB/s", "GB/s", "" };
 void CMaaFtpServerConnection::OnTimer(int f)
 {
-    //     printf("CMaaFtpServerConnection::OnTimer(): f = %d\n", f);
+    // printf("CMaaFtpServerConnection::OnTimer(): f = %d\n", f);
     switch(f)
     {
     case 10:
+        //printf("CMaaFtpServerConnection::OnTimer(%d)\n", f);
+        printf("us=%d\n", (int)m_TimerTimeOut10.GetWaitForTime(1000000000, m_pFdSockets ? m_pFdSockets->GetTime() : 0));
+        CMaa_fallthrough;
     case 0:
         //printf("CMaaFtpServerConnection::OnTimer(%d)\n", f);
-        if   (f == 10)
-        {
-            int us=1000000000;
-            m_TimerTimeOut10.GetWaitForTime(&us, m_pFdSockets ? m_pFdSockets->GetTime() : 0);
-            printf("us=%d\n", us);
-        }
         CloseByException("OnTimer(0)");
         break;
     case 2:
@@ -3759,10 +3756,10 @@ void CFtpServerData::OnTimer(int f)
         m_Error = 3; // time out
         CMaa_fallthrough;
     case 0:
-        if   (f == 0)
-        {
-            //printf("CFtpServerData::OnTimer(%d)\n", f);
-        }
+        //if   (f == 0)
+        //{
+        //    printf("CFtpServerData::OnTimer(%d)\n", f);
+        //}
         CloseByException("OnTimer(0)");
         break;
     case 1:
