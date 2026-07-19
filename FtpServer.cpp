@@ -748,7 +748,7 @@ void CMaaFtpServerConnection::OnTimer(int f)
     {
     case 10:
         //printf("CMaaFtpServerConnection::OnTimer(%d)\n", f);
-        printf("us=%d\n", (int)m_TimerTimeOut10.GetWaitForTime(1000000000, m_pFdSockets ? m_pFdSockets->GetTime() : 0));
+        //printf("us=%d\n", (int)m_TimerTimeOut10.GetWaitForTime(1000000000, m_pFdSockets ? m_pFdSockets->GetTime() : 0));
         CMaa_fallthrough;
     case 0:
         //printf("CMaaFtpServerConnection::OnTimer(%d)\n", f);
