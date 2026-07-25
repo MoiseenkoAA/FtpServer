@@ -2928,7 +2928,7 @@ bool CMaaFtpServerConnection::GetRealAndCanonicalFsName(CMaaString CurrentPath, 
         {
             RealDir.Empty();
         }
-        RealDir = RealDir + CurrentPath.Mid(a, b - a);
+        RealDir.AddMidOf(CurrentPath, a, b - a);
         //          printf("RealDir = %S\n", &RealDir);
         CMaaXmlNode n = m_UserNode.FindNodeWithAttr(gCon[CCon::e_FtpServerDir], gCon[CCon::e_FtpServerDir_vfs_path], cDir);
         if   (!n.IsNull())
