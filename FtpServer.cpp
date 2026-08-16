@@ -3889,6 +3889,7 @@ printf("OnMySIGCHLD() - 1\n");
 #endif
 
 #ifndef RR_SVC
+TOOLSLIB_CRT_INIT
 int main(int argn, char * args[])
 {
     CMaaSetConsoleUtf8AndLocale ConsoleInitializer;
