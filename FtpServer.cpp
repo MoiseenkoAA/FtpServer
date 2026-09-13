@@ -1391,7 +1391,6 @@ bool CMaaFtpServerConnection::Process()
                         }
                         CMaaFile f(FailLog, CMaaFile::eACD_SrSw);
                         f.Write(Line);
-                        //f.fprintf("
                     }
                     catch(...)
                     {
@@ -1457,7 +1456,7 @@ bool CMaaFtpServerConnection::Process()
                     Dir -= 1;
                     printf("%s\n", (const char *)Dir);
                }
-               */
+            */
             CMaaString RealDir, CanonicalDir;
             if   (GetRealAndCanonicalFsName(m_Path, Dir, &RealDir, &CanonicalDir, false))
             {
@@ -3364,7 +3363,7 @@ CFtpServerData::~CFtpServerData()
         FlushRecv(false);
     }
 #ifdef FTP_DBG
-    rrlog("||| CFtpServerData::~CFtpServerData()\n"); //fflush(stdout);
+    rrlog("||| CFtpServerData::~CFtpServerData()\n");
 #endif
     CMaaAtomicFastMutexLocker agLocker(gLock); // automatic scope locker
     if   (m_pServer && m_pServer->m_pDataConn == this)
@@ -3384,7 +3383,7 @@ CFtpServerData::~CFtpServerData()
 
 int CFtpServerData::Notify_Read()
 {
-    //printf("R\n");fflush(stdout);
+    //printf("R\n");
     if   (m_Mode != 2)
     {
         return eDisableRead;
@@ -3423,37 +3422,30 @@ int CFtpServerData::Notify_Read()
 
     //int r = RealRcvSndLen(r_);
     //     printf("CFtpServerData::Notify_Read(): r = %d\n", r);
-    //printf("(%d)\n", r);fflush(stdout);
-    //printf("point1\n");fflush(stdout);
+    //printf("(%d)\n", r);
     m_TimerTimeOut10.Start1(TIME_OUT_1);
 
-    //printf("point2\n");fflush(stdout);
     {
         CMaaAtomicFastMutexLocker agLocker(gLock); // automatic scope locker
-        //printf("point3\n");fflush(stdout);
         //int us1=-1, us2=-1;
         if (m_pServer)
         {
             //us1=1000000000, us2=1000000000;
-            ////printf("point4\n");fflush(stdout);
             //m_pServer->m_TimerTimeOut10.GetWaitForTime(&us1, m_pFdSockets->GetTime());
             //m_pServer->m_TimerTimeOut10.StartExt();
             DEF_SRV_m_TimerTimeOut10_Start_TIME_OUT_1;
             //m_pServer->m_TimerTimeOut10.GetWaitForTime(&us2, m_pFdSockets->GetTime());
         }
-        //printf("point5\n");fflush(stdout);
     }
-    //printf("point6\n");fflush(stdout);
     //printf("us1=%d, us2=%d\n", us1, us2);
 
     if (m_BufferSize >= (int)sizeof(m_Buffer) / 2)
     {
         try
         {
-            //printf("point7\n");fflush(stdout);
             //int x = m_BufferSize;
             const int x = m_File.Write(m_Buffer, m_BufferSize);
-            //printf("file write %d\n", x);fflush(stdout);
+            //printf("file write %d\n", x);
             if   (x > 0)
             {
                 m_BytesTransferred += x;
@@ -3467,7 +3459,7 @@ int CFtpServerData::Notify_Read()
         }
         catch(XTOOFile2Error err)
         {
-            //printf("file write error\n");fflush(stdout);
+            //printf("file write error\n");
             //if   (m_BufferSize == 0)
             {
                 m_Error = 2; // file write error
@@ -3486,7 +3478,7 @@ int CFtpServerData::Notify_Read()
     if   (IsClosed(r_))
     {
         //          printf("CFtpServerData::Notify_Read(): IsClosed(%d) == true\n", r);
-        //printf("closing\n");fflush(stdout);
+        //printf("closing\n");
         m_Error = 0;
         CloseByException("File recv complete");
     }
@@ -3642,7 +3634,6 @@ int CFtpServerData::Notify_Error()
         //CProtocolListColor c(CProtocolListColor::eRed);
         printf("%s\n", e.GetMsg());
 
-        fflush(stdout);
         if   (e.GetErrorCode() == CMaa_CONN_CLOSED_ERROR)
         {
             if   (m_Mode != 2)
@@ -3651,7 +3642,7 @@ int CFtpServerData::Notify_Error()
             }
             else
             {
-                //printf("closing\n");fflush(stdout);
+                //printf("closing\n");
                 m_Error = 0;
                 CloseByException("File recv complete");
             }
@@ -3662,7 +3653,7 @@ int CFtpServerData::Notify_Error()
 }
 int CFtpServerData::Notify_Accepted(_IP IpFrom, _Port Port)
 {
-    printf("accepted from %I:%d\n", IpFrom, Port); fflush(stdout);
+    printf("accepted from %I:%d\n", IpFrom, Port);
     m_Time0 = GetTickCount();
     bool b = false;
     {
@@ -3675,7 +3666,7 @@ int CFtpServerData::Notify_Accepted(_IP IpFrom, _Port Port)
     }
     if   (!b)
     {
-        printf("  No server to data connection pointer. throw 1"); fflush(stdout);
+        printf("  No server to data connection pointer. throw 1");
         throw 1;
         //CloseByException("No server to data connection pointer");
     }
@@ -3684,7 +3675,7 @@ int CFtpServerData::Notify_Accepted(_IP IpFrom, _Port Port)
 }
 int CFtpServerData::Notify_Accepted6(_byte * IpFrom, _Port Port)
 {
-    printf("accepted from %J:%d\n", IpFrom, Port); fflush(stdout);
+    printf("accepted from %J:%d\n", IpFrom, Port);
     m_Time0 = GetTickCount();
     bool b = false;
     {
@@ -3697,7 +3688,7 @@ int CFtpServerData::Notify_Accepted6(_byte * IpFrom, _Port Port)
     }
     if   (!b)
     {
-        printf("  No server to data connection pointer. throw 1"); fflush(stdout);
+        printf("  No server to data connection pointer. throw 1");
         throw 1;
         //CloseByException("No server to data connection pointer");
     }
@@ -3706,7 +3697,7 @@ int CFtpServerData::Notify_Accepted6(_byte * IpFrom, _Port Port)
 }
 int CFtpServerData::Notify_Connected(_IP Ip, _Port Port, const char * DnsName)
 {
-    printf("connected to %I:%d\n", Ip, Port); fflush(stdout);
+    printf("connected to %I:%d\n", Ip, Port);
 
     m_Time0 = GetTickCount();
     bool b = false;
@@ -3726,7 +3717,7 @@ int CFtpServerData::Notify_Connected(_IP Ip, _Port Port, const char * DnsName)
 }
 int CFtpServerData::Notify_Connected6(_byte * Ip, _Port Port, const char * DnsName)
 {
-    printf("connected to %J:%d\n", Ip, Port); fflush(stdout);
+    printf("connected to %J:%d\n", Ip, Port);
 
     m_Time0 = GetTickCount();
     bool b = false;
@@ -3746,7 +3737,7 @@ int CFtpServerData::Notify_Connected6(_byte * Ip, _Port Port, const char * DnsNa
 }
 void CFtpServerData::OnTimer(int f)
 {
-    //printf("CFtpServerData::OnTimer(%d):\n", f); fflush(stdout);
+    //printf("CFtpServerData::OnTimer(%d):\n", f);
 
     switch(f)
     {
@@ -3937,43 +3928,7 @@ int main(int argn, char * args[])
 #endif
     */
     // (size_t)( (ptrdiff_t)
-    //printf("sizeof(int) == %d, sizeof(long) == %d, sizeof(_dword) == %d, sizeof(_qword) == %d\n",
-    //	sizeof(int), sizeof(long), sizeof(_dword), sizeof(_qword));
-
-#if 0
-    {
-        {
-            struct __finddata64_t m_ff;
-            intptr_t m_h;
-            m_h = _findfirst64("C:\\windows\\System32\\*.*", &m_ff);
-            if   (m_h != -1)
-            {
-                do
-                {
-                    int x = (int)strlen(m_ff.name);
-                    if   (x > 4 && !stricmp(m_ff.name + x - 4, ".inf"))
-                    {
-                        printf("%s\n", m_ff.name);
-                    }
-
-                } while(_findnext64(m_h, &m_ff) != -1);
-                _findclose(m_h);
-            }
-        }
-        printf("--------------\n");
-        int nn = 0;
-        //CMaaFindFile2 ff("Debug");
-        CMaaFindFile2 ff("c:\\windows\\system32\\*.inf", 1);
-        CMaaFindFile2::sFind f;
-        while(ff.Get(f))
-        {
-            const char * nm[5] = {"unknown", "file", "dir", "dot", "dotdot"};
-
-            printf("%3d %s %s\n", ++nn, f.GetTypeName(), (const char *)f.m_FileName);
-        }
-        printf("--------------\n");
-    }
-#endif
+    //printf("sizeof(int) == %d, sizeof(long) == %d, sizeof(_dword) == %d, sizeof(_qword) == %d\n", (int)sizeof(int), (int)sizeof(long), (int)sizeof(_dword), (int)sizeof(_qword));
 
     try
     {
@@ -4022,77 +3977,10 @@ int main(int argn, char * args[])
         for  (int i = 10; i > 0; i--)
         {
             printf(" \rWait %d...", i);
-            fflush(stdout);
-#ifdef _WIN32
-            Sleep(1000);
-#else
-            usleep(1000000);
-#endif
+            ms_sleep(1000);
         }
         printf("\r                         \n");
     }
-    /*
-     {
-          AA a(1);
-          for  (int i = 0; i < 10; i++)
-          {
-               {
-                    a.t();
-               }
-               AA a(2);
-               a.t();
-          }
-     }
-    */
-    if   (0)
-    {
-        printf("--------------\n");
-        int nn = 0;
-        //CMaaFindFile2 ff("Debug");
-        CMaaFindFile2 ff("/home/*", 2);
-        CMaaFindFile2::sFind f;
-        while(ff.Get(f))
-        {
-            const char * nm[5] = {"unknown", "file", "dir", "dot", "dotdot"};
-
-            printf("%3d %s %s\n", ++nn, f.m_Type >= CMaaFindFile2::sFind::eFile && f.m_Type <= CMaaFindFile2::sFind::eDotDot ? nm[f.m_Type] : nm[0],
-                 (const char *)f.m_FileName);
-        }
-        printf("--------------\n");
-    }
-    /*
-     {
-          printf("--------------\n");
-          int nn = 0;
-          //CMaaFindFile2 ff("Debug");
-          CMaaFindFile2 ff("c:\\ftp\\*", -1);
-          CMaaFindFile2::sFind f;
-          while(ff.Get(f))
-          {
-               const char * nm[5] = {"unknown", "file", "dir", "dot", "dotdot"};
-
-               printf("%3d %s %s\n", ++nn, f.m_Type >= CMaaFindFile2::sFind::eFile && f.m_Type <= CMaaFindFile2::sFind::eDotDot ? nm[f.m_Type] : nm[0],
-                    (const char *)f.m_FileName);
-          }
-          printf("--------------\n");
-     }
-     {
-          int nn = 0;
-          CMaaFindFile2 ff("Debug\\Ftp*");
-          //CMaaFindFile2 ff(".\\Ftp*");
-          //CMaaFindFile2 ff(".", "*\\Ftp*", -1);
-          //CMaaFindFile2 ff("Debug", "*\\Ftp*", -1);
-          CMaaFindFile2::sFind f;
-          while(ff.Get(f))
-          {
-               const char * nm[5] = {"unknown", "file", "dir", "dot", "dotdot"};
-
-               printf("%3d %s %s\n", ++nn, f.m_Type >= CMaaFindFile2::sFind::eFile && f.m_Type <= CMaaFindFile2::sFind::eDotDot ? nm[f.m_Type] : nm[0],
-                    (const char *)f.m_FileName);
-          }
-     }
-     return 1;
-    */
 
     CMaaString port = "0.0.0.0:21";
 
