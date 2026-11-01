@@ -395,7 +395,7 @@ int CMaaFtpServer::Notify_Error()
 {
     XTOOSockErr err("CMaaFtpServer::Notify_Error()", nullptr);
     printf("CMaaFtpServer::Notify_Error(): %s\n", err.GetMsg());
-    CloseByException("Error");
+    ResetByException("Error");
     return 0;
 }
 //---------------------------------------------------------------------------
@@ -3648,7 +3648,7 @@ int CFtpServerData::Notify_Error()
             }
         }
     }
-    CloseByException("");
+    ResetByException("");
     return 0;
 }
 int CFtpServerData::Notify_Accepted(_IP IpFrom, _Port Port)
